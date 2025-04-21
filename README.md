@@ -26,13 +26,15 @@ Uma aplicação mobile desenvolvida com **React Native** e **Expo** que ajuda o 
 ```bash
 git clone https://github.com/seu-usuario/calculadora-abastecimento.git
 cd calculadora-abastecimento
+```
 
 2. Instale as dependências:
- 
+```bash 
 npm install 
-
+```
 3. Inicie o Projeto
- 
+```bash
 npx expo start 
+```
 
 4. Escaneie o QR Code com o aplicativo Expo Go no celular.
