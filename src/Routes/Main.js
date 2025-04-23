@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 
 export default function Main(){
     return(  // options={{header:() =>null}} => retira o header criado pelo navegation e utiliza o native-paper
-        <Stack.Navigator> 
+        <Stack.Navigator initialRouteName="Abastecimento"> 
             <Stack.Screen name="Home" component={Home} options={{header:() =>null}}/>
             <Stack.Screen name="Abastecimento" component={Abastecimento} options={{header:() =>null}}/>
         </Stack.Navigator>

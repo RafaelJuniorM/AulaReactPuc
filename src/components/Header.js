@@ -8,7 +8,7 @@ import {
   Text,
 } from "react-native-paper";
 
-export default function Header({ title, goBack }) {
+export default function Header({ title, goBack, children }) {
   return (
     <Appbar.Header style={styles.header}>
       {
@@ -16,6 +16,7 @@ export default function Header({ title, goBack }) {
         <Appbar.BackAction onPress={goBack} />
       }
       <Appbar.Content title={title}  />
+      {children}
     </Appbar.Header>
   );
 }
