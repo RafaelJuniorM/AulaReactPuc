@@ -1,6 +1,15 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, RadioButton, TextInput, Button, Appbar } from "react-native-paper";
+import React, { use, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Text,
+  RadioButton,
+  TextInput,
+  Button,
+  Appbar,
+} from "react-native-paper";
+
+//importando a biblioteca Calendar
+import { Calendar } from "react-native-calendars";
 
 // import sempre necessario para navegar entre telas
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +23,10 @@ export default function Abastecimento() {
   const navigation = useNavigation();
   const [TipoCombustivel, setTipoCombustivel] = React.useState("Gasolina");
 
+  //colocando a data padrao
+  const [dataSelecionada, setDataSelecionada] = useState("");
+  const [showCalendar, setShowCalendar] = useState(false); //abrir ou nao o popup calendario
+
   //dados inputs
   const [tipo, setTipo] = useState("gas");
   const [preco, setPreco] = useState("");
@@ -21,27 +34,28 @@ export default function Abastecimento() {
   const [odometro, setOdometro] = useState("");
   const [data, setData] = useState("");
 
-  // criando função de exluir/salvar 
-  const handleSalvar = () =>{
-    console.log('salvar')
-  }
+  // criando função de exluir/salvar
+  const handleSalvar = () => {
+    console.log("salvar");
+  };
 
-  const handleExcluir = () =>{
-    console.log('Excluiu')
-  }
+  const handleExcluir = () => {
+    console.log("Excluiu");
+  };
 
-
+  //funçao para lidar com a data selecionada
+  const selecionarData = (day) => {
+    setDataSelecionada(day.dateString);
+    setShowCalendar(false); // Oculta o calendário após selecionar
+  };
 
   return (
     <Container>
-      <Header
-        title={"Abastecimento"}
-        goBack={() => navigation.goBack()}
-      > 
-        <Appbar.Action icon="check" onPress={ handleSalvar} /> 
-        <Appbar.Action icon="trash-can" onPress={ handleExcluir} />
+      <Header title={"Abastecimento"} goBack={() => navigation.goBack()}>
+        <Appbar.Action icon="check" onPress={handleSalvar} />
+        <Appbar.Action icon="trash-can" onPress={handleExcluir} />
       </Header>
-      <Body>
+      <Body style={{ paddingBottom: 30 }}>
         <View style={styles.containerCheck}>
           <View style={styles.containerCheckItem}>
             <RadioButton
@@ -62,12 +76,31 @@ export default function Abastecimento() {
             <Text>Etanol</Text>
           </View>
         </View>
-        <Input
-          label="Data"
-          value={data}
-          onChangeText={(text) => setData(text)}
-          left={<TextInput.Icon icon="calendar" />}
-        />
+        {showCalendar && (
+          <Calendar
+            onDayPress={selecionarData}
+            markedDates={{
+              [dataSelecionada]: {
+                selected: true,
+                selectedColor: "#6200ee",
+              },
+            }}
+            theme={{
+              selectedDayTextColor: "#fff",
+              todayTextColor: "#6200ee",
+              arrowColor: "#6200ee",
+            }}
+            hideExtraDays
+          />
+        )}
+        <TouchableOpacity  style={{paddingVertical:14}} onPress={() => setShowCalendar(true)}>
+          <Input
+            label="Data"
+            value={dataSelecionada}
+            left={<TextInput.Icon icon="calendar" />}
+            editable={false}
+          />
+        </TouchableOpacity>
         <Input
           label="Preço"
           value={preco}
@@ -90,16 +123,22 @@ export default function Abastecimento() {
         <Button
           mode="contained"
           color={"red"}
-          style= {styles.button}
-          onPress={ handleSalvar}
-        >  Salvar</Button>
+          style={styles.button}
+          onPress={handleSalvar}
+        >
+          {" "}
+          Salvar
+        </Button>
 
         <Button
           mode="contained"
           background={"red"}
-          style= {styles.button}
-          onPress={ handleExcluir}
-        > Excluir</Button>
+          style={styles.button}
+          onPress={handleExcluir}
+        >
+          {" "}
+          Excluir
+        </Button>
       </Body>
     </Container>
   );
@@ -118,5 +157,5 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 8,
-  }
+  },
 });
