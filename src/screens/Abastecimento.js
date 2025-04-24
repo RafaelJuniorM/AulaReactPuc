@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import {
   Text,
@@ -8,31 +8,43 @@ import {
   Appbar,
 } from "react-native-paper";
 
+
+
 //importando a biblioteca Calendar
 import { Calendar } from "react-native-calendars";
 
-// import sempre necessario para navegar entre telas
-import { useNavigation } from "@react-navigation/native";
+// import sempre necessario para navegar entre telas useRoute para pegar dados de outra pagina
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import Container from "../components/Container";
 import Header from "../components/Header";
 import Body from "../components/Body";
 import Input from "../components/Input";
 
-export default function Abastecimento() {
+export default function Abastecimento({}) {
   const navigation = useNavigation();
-  const [TipoCombustivel, setTipoCombustivel] = React.useState("Gasolina");
-
+  const route = useRoute();
+  const {item} = route.params ? route.params : {}; // verificando se veio um parametro para a rota 
+  
   //colocando a data padrao
-  const [dataSelecionada, setDataSelecionada] = useState("");
   const [showCalendar, setShowCalendar] = useState(false); //abrir ou nao o popup calendario
 
   //dados inputs
   const [tipo, setTipo] = useState("gas");
-  const [preco, setPreco] = useState("");
-  const [valor, setValor] = useState("");
-  const [odometro, setOdometro] = useState("");
-  const [data, setData] = useState("");
+  const [preco, setPreco] = useState(null);
+  const [valor, setValor] = useState(null);
+  const [odometro, setOdometro] = useState(null);
+  const [data, setDataSelecionada] = useState("");
+
+  useEffect(() => {
+    if(item){
+      setTipo(item.tipo == 0 ? 'Gasolina' : 'Etanol');
+      setDataSelecionada(item.data);
+      setPreco(item.preco.toString());
+      setValor(item.valor.toString());
+      setOdometro(item.odometro.toString());
+    }
+  },[item]);
 
   // criando função de exluir/salvar
   const handleSalvar = () => {
@@ -53,15 +65,19 @@ export default function Abastecimento() {
     <Container>
       <Header title={"Abastecimento"} goBack={() => navigation.goBack()}>
         <Appbar.Action icon="check" onPress={handleSalvar} />
-        <Appbar.Action icon="trash-can" onPress={handleExcluir} />
+        {
+          item && 
+          <Appbar.Action icon="trash-can" onPress={handleExcluir} />
+        }
+        
       </Header>
       <Body style={{ paddingBottom: 30 }}>
         <View style={styles.containerCheck}>
           <View style={styles.containerCheckItem}>
             <RadioButton
               value="first"
-              status={TipoCombustivel === "Gasolina" ? "checked" : "unchecked"}
-              onPress={() => setTipoCombustivel("Gasolina")}
+              status={tipo === "Gasolina" ? "checked" : "unchecked"}
+              onPress={() => setTipo("Gasolina")}
               color="red"
             />
             <Text>Gasolina</Text>
@@ -69,8 +85,8 @@ export default function Abastecimento() {
           <View style={styles.containerCheckItem}>
             <RadioButton
               value="first"
-              status={TipoCombustivel === "Etanol" ? "checked" : "unchecked"}
-              onPress={() => setTipoCombustivel("Etanol")}
+              status={tipo === "Etanol" ? "checked" : "unchecked"}
+              onPress={() => setTipo("Etanol")}
               color="green"
             />
             <Text>Etanol</Text>
@@ -80,7 +96,7 @@ export default function Abastecimento() {
           <Calendar
             onDayPress={selecionarData}
             markedDates={{
-              [dataSelecionada]: {
+              [data]: {
                 selected: true,
                 selectedColor: "#6200ee",
               },
@@ -93,10 +109,11 @@ export default function Abastecimento() {
             hideExtraDays
           />
         )}
-        <TouchableOpacity  style={{paddingVertical:14}} onPress={() => setShowCalendar(true)}>
+        <TouchableOpacity>
           <Input
+            onPress={() => setShowCalendar(true)}
             label="Data"
-            value={dataSelecionada}
+            value={data}
             left={<TextInput.Icon icon="calendar" />}
             editable={false}
           />
@@ -123,22 +140,26 @@ export default function Abastecimento() {
         <Button
           mode="contained"
           color={"red"}
-          style={styles.button}
+          style={[styles.button, styles.buttonSalvar]}
           onPress={handleSalvar}
         >
           {" "}
           Salvar
         </Button>
 
-        <Button
+        {
+          item &&
+          <Button
           mode="contained"
           background={"red"}
-          style={styles.button}
+          style={[styles.button, styles. buttonExcluir]}
           onPress={handleExcluir}
         >
           {" "}
           Excluir
         </Button>
+        }
+     
       </Body>
     </Container>
   );
@@ -157,5 +178,12 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 8,
+    
   },
+  buttonExcluir: {
+    backgroundColor:'#F44336',
+  },
+  buttonSalvar: {
+    backgroundColor:'#4CAF50',
+  }
 });
