@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BottomNavigation, Text } from "react-native-paper";
+import { BottomNavigation } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import Calculadora from "./Calculadora";
@@ -9,11 +9,11 @@ const Home = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: "calculadora", title: "Calculadora", focusedIcon: "calculator" },
-    {key: "gastos", title: "Gastos",focusedIcon:"gas-station" }
-]);
+    { key: "gastos", title: "Gastos", focusedIcon: "gas-station" },
+  ]);
 
   const renderScene = BottomNavigation.SceneMap({
-    gastos:Gastos,
+    gastos: Gastos,
     calculadora: Calculadora,
   });
 

@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // importar as telas utilizadas na navegação
 import Home from "../screens/Home";
 import Abastecimento from "../screens/Abastecimento";
+import Gastos from "../screens/Gastos"
 
 
 // criando a pilha de navegação 

@@ -1,51 +1,30 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import { List, Text, FAB } from "react-native-paper";
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 import Container from "../components/Container";
 import Header from "../components/Header";
 import Body from "../components/Body";
-
-const DATA = [
-  {
-    id: 1,
-    tipo: 0,
-    data: "23/04/2025",
-    preco: 5.59,
-    valor: 100,
-    odometro: 157500,
-  },
-  {
-    id: 2,
-    tipo: 0,
-    data: "25/04/2025",
-    preco: 5.59,
-    valor: 50,
-    odometro: 159500,
-  },
-  {
-    id: 3,
-    tipo: 0,
-    data: "01/05/2025",
-    preco: 5.62,
-    valor: 200,
-    odometro: 160500,
-  },
-  {
-    id: 4,
-    tipo: 1,
-    data: "02/05/2025",
-    preco: 4.52,
-    valor: 150,
-    odometro: 160900,
-  },
-];
+import { listarAbastecimentos } from "../Routes/abastecimentoServices";
 
 export default function Gastos() {
   const navigation = useNavigation();
 
+  const [abastecimento, setAbastecimentos] = useState([]);
+
+  async function carregarAbastecimento() {
+    const dados = await listarAbastecimentos();
+    console.log(dados);
+    setAbastecimentos(dados);
+  }
+
+  useFocusEffect( 
+    useCallback(() => {
+      carregarAbastecimento();
+    }, [])
+  );
   const renderItem = ({ item }) => (
     <List.Item
       title={
@@ -56,7 +35,7 @@ export default function Gastos() {
         <List.Icon
           {...props}
           icon="gas-station"
-          color={item.tipo == 0 ? "red" : "green"}
+          color={item.tipo == 1 ? "red" : "green"}
         />
       )}
       right={(props) => (
@@ -74,9 +53,9 @@ export default function Gastos() {
       <Header title={"Full Manager"}></Header>
       <Body>
         <FlatList
-          data={DATA}
+          data={abastecimento}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
         />
         <FAB
           icon="plus"

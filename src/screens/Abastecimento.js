@@ -20,6 +20,7 @@ import Container from "../components/Container";
 import Header from "../components/Header";
 import Body from "../components/Body";
 import Input from "../components/Input";
+import { inserirAbastecimento } from "../Routes/abastecimentoServices";
 
 export default function Abastecimento({}) {
   const navigation = useNavigation();
@@ -30,7 +31,7 @@ export default function Abastecimento({}) {
   const [showCalendar, setShowCalendar] = useState(false); //abrir ou nao o popup calendario
 
   //dados inputs
-  const [tipo, setTipo] = useState("gas");
+  const [tipo, setTipo] = useState("Gasolina");
   const [preco, setPreco] = useState(null);
   const [valor, setValor] = useState(null);
   const [odometro, setOdometro] = useState(null);
@@ -38,7 +39,7 @@ export default function Abastecimento({}) {
 
   useEffect(() => {
     if(item){
-      setTipo(item.tipo == 0 ? 'Gasolina' : 'Etanol');
+      setTipo(item.tipo == 1 ? 'Gasolina' : 'Etanol');
       setDataSelecionada(item.data);
       setPreco(item.preco.toString());
       setValor(item.valor.toString());
@@ -46,15 +47,30 @@ export default function Abastecimento({}) {
     }
   },[item]);
 
-  // criando função de exluir/salvar
-  const handleSalvar = () => {
-    console.log("salvar");
+  // criando função de exluir/salvar os dados no BD 
+  const handleSalvar = async () => {
+      if(!preco || !valor || !odometro || !data ){
+        alert('Preencha todos os campos!!!');
+        return;
+      }
+      const novoAbastecimento = {
+        tipo: tipo === 'Etanol' ? 2 : 1,
+        data: data,
+        preco: parseFloat(preco),
+        valor: parseFloat(valor),
+        odometro: parseInt(odometro),
+      };
+      console.log(novoAbastecimento)
+      await inserirAbastecimento(novoAbastecimento);
+      navigation.goBack();
   };
 
-  const handleExcluir = () => {
-    console.log("Excluiu");
+  const handleExcluir = async () => {
+    if (item && item.id) {
+      await deletarAbastecimento(item.id);
+      navigation.goBack();
+    }
   };
-
   //funçao para lidar com a data selecionada
   const selecionarData = (day) => {
     setDataSelecionada(day.dateString);
